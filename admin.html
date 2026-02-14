@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<title>Admin</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="admin-container">
+  <h2>Admin Panel - Logări</h2>
+  <table id="logTable">
+    <tr>
+      <th>Username</th>
+      <th>Password</th>
+    </tr>
+  </table>
+</div>
+
+<script>
+  let loginLog = JSON.parse(localStorage.getItem('loginLog')) || [];
+  const table = document.getElementById('logTable');
+
+  loginLog.forEach(entry => {
+    const row = table.insertRow();
+    row.insertCell(0).innerText = entry.username;
+    row.insertCell(1).innerText = entry.password;
+  });
+</script>
+
+</body>
+</html>
+

